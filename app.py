@@ -58,7 +58,7 @@ class Time(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("id", "username", "password")
+        fields = ("id", "username")
 
 
 one_user_schema = UserSchema()
@@ -135,6 +135,14 @@ def get_user_by_id(id):
     return jsonify(one_user_schema.dump(user))
 
 
+@app.route("/user/get_name/<name>", methods=["GET"])
+def get_user_by_name(name):
+    user = User.query.filter_by(username=name).first()
+    if user == None:
+        return jsonify("Error: User not found")
+    return jsonify(one_user_schema.dump(user))
+
+
 @app.route("/time/get/<id>", methods=["GET"])
 def get_time_by_id(id):
     times = db.session.query(Time).filter(Time.id == id).first()
@@ -180,10 +188,10 @@ def verification():
 
     user = User.query.filter_by(username=username).first()
     if user == None:
-        return jsonify("Username and password did not match")
+        return jsonify("Username not verified")
 
     if not bcrypt.check_password_hash(user.password, password):
-        return jsonify("Username and password did not match")
+        return jsonify("Username not verified")
 
     return jsonify("User verified")
 
@@ -239,6 +247,26 @@ def add_recipe():
 # PUT endpoints
 
 # DELETE endpoints
+
+
+@app.route("/recipe/delete/<id>", methods=["DELETE"])
+def delete_recipe_by_id(id):
+    recipe = Recipe.query.get(id)
+    if recipe == None:
+        return jsonify("Error: Invalid recipe")
+    db.session.delete(recipe)
+    db.session.commit()
+    return jsonify("Recipe deleted successfully")
+
+
+@app.route("/user/delete/<id>", methods=["DELETE"])
+def delete_user_by_id(id):
+    user = User.query.get(id)
+    if user == None:
+        return jsonify("Error: Invalid user")
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify("User deleted successfully")
 
 
 if __name__ == "__main__":
