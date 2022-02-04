@@ -135,6 +135,14 @@ def get_user_by_id(id):
     return jsonify(one_user_schema.dump(user))
 
 
+@app.route("/user/get_name/<name>", methods=["GET"])
+def get_user_by_name(name):
+    user = User.query.filter_by(username=name).first()
+    if user == None:
+        return jsonify("Error: User not found")
+    return jsonify(one_user_schema.dump(user))
+
+
 @app.route("/time/get/<id>", methods=["GET"])
 def get_time_by_id(id):
     times = db.session.query(Time).filter(Time.id == id).first()
