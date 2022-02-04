@@ -37,8 +37,7 @@ class Recipe(db.Model):
 class Ingredient(db.Model):
     __tablename__ = "ingredients"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String(200), nullable=False)
-    quantity = db.Column(db.String(200), nullable=False)
+    text = db.Column(db.Text, nullable=False)
 
     recipe_id = db.Column(db.Integer, db.ForeignKey("recipes.id"), nullable=False)
 
@@ -201,7 +200,7 @@ def add_recipe():
     if request.content_type != "application/json":
         return jsonify("Error: Data must be sent as JSON")
 
-    data = request.get_json()
+    data = request.get_json().get("values")
     name = data.get("name")
     ingredients = data.get("ingredients")
     instructions = data.get("instructions")
@@ -211,9 +210,6 @@ def add_recipe():
 
     if name == "":
         return jsonify("Error: Must include a name")
-
-    if len(ingredients) == 0:
-        return jsonify("Error: Must include ingredients")
 
     if servings == "":
         servings = None
@@ -226,8 +222,9 @@ def add_recipe():
     db.session.commit()
 
     for ingredient in ingredients:
-        # parse ingredients in some way
-        pass
+        new_ingredient = Ingredient(text=ingredient, recipe_id=new_recipe.id)
+        db.session.add(new_ingredient)
+        db.session.commit()
 
     new_time = Time(
         prep=time["prep"],
