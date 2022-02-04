@@ -93,6 +93,10 @@ one_recipe_schema = RecipeSchema()
 multi_recipe_schema = RecipeSchema(many=True)
 
 
+# endpoints
+
+# GET endpoints
+
 @app.route("/recipe/get-all", methods=["GET"])
 def get_all_recipes():
     all_recipes = db.session.query(Recipe).all()
@@ -135,4 +139,62 @@ def get_all_times(id):
     return jsonify(one_time_schema.dump(times))
 
 
+# POST endpoints
 
+
+@app.route("/recipe/add", methods=["POST"])
+def add_recipe():
+    if request.content_type != "application/json":
+        return jsonify("Error: Data must be sent as JSON")
+
+    data = request.get_json()
+    name = data.get("name")
+    ingredients = data.get("ingredients")
+    instructions = data.get("instructions")
+    servings = data.get("servings")
+    image_url = data.get("image")
+    time = data.get("time")
+
+    if name == "":
+        return jsonify("Error: Must include a name")
+
+    if len(ingredients) == 0:
+        return jsonify("Error: Must include ingredients")
+
+    if servings == "":
+        servings = None
+
+    if len(instructions) > 0:
+        instructions = "/n".join(instructions)
+
+    new_recipe = Recipe(name=name, servings=servings, image_url=image_url, instructions=instructions)
+    db.session.add(new_recipe)
+    db.session.commit()
+
+    for ingredient in ingredients:
+        # parse ingredients in some way
+        pass
+
+    new_time = Time(
+        prep=time["prep"],
+        cook=time["cook"],
+        active=time["active"],
+        inactive=time["inactive"],
+        ready=time["ready"],
+        total=time["total"],
+        recipe_id=new_recipe.id,
+    )
+    db.session.add(new_time)
+    db.session.commit()
+
+    return jsonify(one_recipe_schema.dump(new_recipe))
+
+
+# PUT endpoints
+
+# DELETE endpoints
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
