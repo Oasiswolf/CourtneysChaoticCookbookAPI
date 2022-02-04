@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -135,9 +136,15 @@ def get_user_by_id(id):
 
 
 @app.route("/time/get/<id>", methods=["GET"])
-def get_all_times(id):
+def get_time_by_id(id):
     times = db.session.query(Time).filter(Time.id == id).first()
     return jsonify(one_time_schema.dump(times))
+
+
+@app.route("/recipe/random", methods=["GET"])
+def get_one_random_recipe():
+    recipes = Recipe.query.all()
+    return jsonify(one_recipe_schema.dump(random.choice(recipes)))
 
 
 # POST endpoints
