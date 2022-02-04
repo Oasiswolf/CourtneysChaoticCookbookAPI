@@ -228,12 +228,12 @@ def add_recipe():
         db.session.commit()
 
     new_time = Time(
-        prep=time["prep"],
-        cook=time["cook"],
-        active=time["active"],
-        inactive=time["inactive"],
-        ready=time["ready"],
-        total=time["total"],
+        prep=time["prep"] if time["prep"] != "" else None,
+        cook=time["cook"] if time["cook"] != "" else None,
+        active=time["active"] if time["active"] != "" else None,
+        inactive=time["inactive"] if time["inactive"] != "" else None,
+        ready=time["ready"] if time["ready"] != "" else None,
+        total=time["total"] if time["total"] != "" else None,
         recipe_id=new_recipe.id,
     )
     db.session.add(new_time)
