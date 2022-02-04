@@ -170,7 +170,7 @@ def add_user():
     password = data.get("password")
 
     pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
-    new_user = User(username, pw_hash)
+    new_user = User(username=username, password=pw_hash)
     db.session.add(new_user)
     db.session.commit()
 
