@@ -11,6 +11,8 @@ flask-cors = "*"
 marshmallow-sqlalchemy = "*"
 bcrypt = "*"
 flask-bcrypt = "*"
+gunicorn = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
