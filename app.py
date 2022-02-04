@@ -71,6 +71,18 @@ one_ingredient_schema = IngredientSchema()
 multi_ingredient_schema = IngredientSchema(many=True)
 
 
+class TimeSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "prep", "cook", "active", "inactive", "ready", "total")
+
+
+one_time_schema = TimeSchema()
+multi_time_schema = TimeSchema(many=True)
+
+
 class RecipeSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name", "servings", "image_url", "instructions")
+        fields = ("id", "name", "servings", "image_url", "instructions", "ingredients", "time")
+
+    ingredients = ma.Nested(multi_ingredient_schema)
+    time = ma.Nested(one_time_schema)
