@@ -58,7 +58,7 @@ class Time(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("id", "username", "password")
+        fields = ("id", "username")
 
 
 one_user_schema = UserSchema()
@@ -239,6 +239,16 @@ def add_recipe():
 # PUT endpoints
 
 # DELETE endpoints
+
+
+@app.route("/recipe/delete/<id>", methods=["DELETE"])
+def delete_recipe_by_id(id):
+    recipe = Recipe.query.get(id)
+    if recipe == None:
+        return jsonify("Error: Invalid recipe")
+    db.session.delete(recipe)
+    db.session.commit()
+    return jsonify("Recipe deleted successfully")
 
 
 if __name__ == "__main__":
