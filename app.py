@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 CORS(app)
@@ -28,7 +29,7 @@ class Recipe(db.Model):
     instructions = db.Column(db.Text)
 
     ingredients = db.relationship("Ingredient", backref="recipe", lazy=True, cascade="all, delete-orphan")
-    times = db.relationship("Time", backref="recipe", lazy=True, cascade="all, delete-orphan")
+    time = db.relationship("Time", backref="recipe", uselist=False, lazy=True, cascade="all, delete-orphan")
 
 
 class Ingredient(db.Model):
@@ -86,3 +87,7 @@ class RecipeSchema(ma.Schema):
 
     ingredients = ma.Nested(multi_ingredient_schema)
     time = ma.Nested(one_time_schema)
+
+
+one_recipe_schema = RecipeSchema()
+multi_recipe_schema = RecipeSchema(many=True)
