@@ -246,6 +246,24 @@ def add_recipe():
 
 # PUT endpoints
 
+
+@app.route("/user/update", methods=["PUT"])
+def update_user():
+    data = request.get_json()
+    id = data.get("id")
+    user = User.query.get(id)
+    if user == None:
+        return jsonify("Error: Invalid user")
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if username != None and username != "":
+        user.username = username
+    user.password = bcrypt.generate_password_hash(password).decode("utf-8")
+    db.session.commit()
+
+
 # DELETE endpoints
 
 
