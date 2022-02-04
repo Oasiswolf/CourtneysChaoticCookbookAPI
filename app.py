@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 CORS(app)
+bcrypt = Bcrypt(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "app.sqlite")
 
@@ -92,10 +93,10 @@ class RecipeSchema(ma.Schema):
 one_recipe_schema = RecipeSchema()
 multi_recipe_schema = RecipeSchema(many=True)
 
-
 # endpoints
 
 # GET endpoints
+
 
 @app.route("/recipe/get-all", methods=["GET"])
 def get_all_recipes():
@@ -105,7 +106,7 @@ def get_all_recipes():
 
 @app.route("/recipe/get/<id>", methods=["GET"])
 def get_recipe_by_id(id):
-    recipe = db.session.query(Recipe).filter(Month.id == id).first()
+    recipe = db.session.query(Recipe).filter(Recipe.id == id).first()
     return jsonify(one_recipe_schema.dump(recipe))
 
 
@@ -133,13 +134,49 @@ def get_user_by_id(id):
     return jsonify(one_user_schema.dump(user))
 
 
-@app.route("/time/get/<id>", methods = ["GET"])
+@app.route("/time/get/<id>", methods=["GET"])
 def get_all_times(id):
     times = db.session.query(Time).filter(Time.id == id).first()
     return jsonify(one_time_schema.dump(times))
 
 
 # POST endpoints
+
+
+@app.route("/user/add", methods=["POST"])
+def add_user():
+    if request.content_type != "application/json":
+        return jsonify("Error: Data must be sent as JSON")
+
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+
+    pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+    new_user = User(username, pw_hash)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify(one_user_schema.dump(new_user))
+
+
+@app.route("/user/verification", methods=["POST"])
+def verification():
+    if request.content_type != "application/json":
+        return jsonify("Error: Data must be sent as JSON")
+
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        return jsonify("Username and password did not match")
+
+    if not bcrypt.check_password_hash(user.password, password):
+        return jsonify("Username and password did not match")
+
+    return jsonify("User verified")
 
 
 @app.route("/recipe/add", methods=["POST"])
@@ -193,7 +230,6 @@ def add_recipe():
 # PUT endpoints
 
 # DELETE endpoints
-
 
 
 if __name__ == "__main__":
