@@ -8,6 +8,8 @@ import random
 app = Flask(__name__)
 CORS(app)
 bcrypt = Bcrypt(app)
+# The Live Web Address for this api
+# https://courtneys-chaotic-cookbook-api.herokuapp.com 
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = "postgresql://dimtatlrpvoeti:7c2a0a66d9ee19400602937170f178831d931505d333c998689edd59db98cfc9@ec2-23-23-133-10.compute-1.amazonaws.com:5432/dvebbntrfft51"
