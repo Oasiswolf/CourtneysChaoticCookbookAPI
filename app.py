@@ -87,3 +87,7 @@ class RecipeSchema(ma.Schema):
 
     ingredients = ma.Nested(multi_ingredient_schema)
     time = ma.Nested(one_time_schema)
+
+
+one_recipe_schema = RecipeSchema()
+multi_recipe_schema = RecipeSchema(many=True)
