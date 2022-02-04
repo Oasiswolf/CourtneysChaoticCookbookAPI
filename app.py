@@ -91,3 +91,48 @@ class RecipeSchema(ma.Schema):
 
 one_recipe_schema = RecipeSchema()
 multi_recipe_schema = RecipeSchema(many=True)
+
+
+@app.route("/recipe/get-all", methods=["GET"])
+def get_all_recipes():
+    all_recipes = db.session.query(Recipe).all()
+    return jsonify(multi_recipe_schema.dump(all_recipes))
+
+
+@app.route("/recipe/get/<id>", methods=["GET"])
+def get_recipe_by_id(id):
+    recipe = db.session.query(Recipe).filter(Month.id == id).first()
+    return jsonify(one_recipe_schema.dump(recipe))
+
+
+@app.route("/ingredient/get-all", methods=["GET"])
+def get_all_ingredients():
+    all_ingredients = db.session.query(Ingredient).all()
+    return jsonify(multi_ingredient_schema.dump(all_ingredients))
+
+
+@app.route("/ingredient/get/<id>", methods=["GET"])
+def get_ingredient_by_id(id):
+    ingredient = db.session.query(Ingredient).filter(Ingredient.id == id).first()
+    return jsonify(one_ingredient_schema.dump(ingredient))
+
+
+@app.route("/user/get", methods=["GET"])
+def get_all_users():
+    users = db.session.query(User).all()
+    return jsonify(multi_user_schema.dump(users))
+
+
+@app.route("/user/get/<id>", methods=["GET"])
+def get_user_by_id(id):
+    user = db.session.query(User).filter(User.id == id).first()
+    return jsonify(one_user_schema.dump(user))
+
+
+@app.route("/time/get/<id>", methods = ["GET"])
+def get_all_times(id):
+    times = db.session.query(Time).filter(Time.id == id).first()
+    return jsonify(one_time_schema.dump(times))
+
+
+
