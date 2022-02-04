@@ -1,4 +1,3 @@
-import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -67,7 +66,7 @@ multi_user_schema = UserSchema(many=True)
 
 class IngredientSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name", "quantity", "recipe_id")
+        fields = ("id", "text", "recipe_id")
 
 
 one_ingredient_schema = IngredientSchema()
@@ -223,6 +222,7 @@ def add_recipe():
     db.session.commit()
 
     for ingredient in ingredients:
+        print(ingredient)
         new_ingredient = Ingredient(text=ingredient, recipe_id=new_recipe.id)
         db.session.add(new_ingredient)
         db.session.commit()
