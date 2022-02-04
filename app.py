@@ -180,10 +180,10 @@ def verification():
 
     user = User.query.filter_by(username=username).first()
     if user == None:
-        return jsonify("Username and password did not match")
+        return jsonify("Username not verified")
 
     if not bcrypt.check_password_hash(user.password, password):
-        return jsonify("Username and password did not match")
+        return jsonify("Username not verified")
 
     return jsonify("User verified")
 
@@ -249,6 +249,16 @@ def delete_recipe_by_id(id):
     db.session.delete(recipe)
     db.session.commit()
     return jsonify("Recipe deleted successfully")
+
+
+@app.route("/user/delete/<id>", methods=["DELETE"])
+def delete_user_by_id(id):
+    user = User.query.get(id)
+    if user == None:
+        return jsonify("Error: Invalid user")
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify("User deleted successfully")
 
 
 if __name__ == "__main__":
