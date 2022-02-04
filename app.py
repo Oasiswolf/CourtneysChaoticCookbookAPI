@@ -157,6 +157,8 @@ def add_user():
 
     data = request.get_json()
     username = data.get("username")
+    if User.query.filter_by(username=username).first() != None:
+        return jsonify("User already exists")
     password = data.get("password")
 
     pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
